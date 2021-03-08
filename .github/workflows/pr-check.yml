@@ -1,4 +1,4 @@
-name: WebServices CI
+name: Build And Unit Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  test:
+  build-test:
     runs-on: ${{ matrix.os }} # compiles and test on Ubuntu
 
     strategy:
@@ -84,10 +84,6 @@ jobs:
     #   uses: GabrielBB/xvfb-action@v1
     #   with:
     #     run: mvn clean verify -U -fae -B -DskipITests=true -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
-    - name: CMD
-      run: |
-        pwd
-        ls
     - name: Test step - writing xunit file
       uses: DamianReeves/write-file-action@v1.0
       with:
@@ -160,14 +156,9 @@ jobs:
     - name: Archiving test artifacts
       uses: actions/upload-artifact@v2
       with: 
-        name: junit-logs
+        name: unit-test-reports
         path: |
           *tests/**/target/surefire-reports/
           */*tests/**/target/surefire-reports/
           **/*.log
         retention-days: 5
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1
-      if: always()
-      with:
-        files: tests/**/surefire-reports/*.xml
