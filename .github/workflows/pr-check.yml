@@ -25,58 +25,58 @@ jobs:
         java-version: ${{ matrix.java }}
         java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
         architecture: x64
-    - name: maven-settings-xml-action
-      uses: whelk-io/maven-settings-xml-action@v14
-      with:
-        repositories: |
-          [{ 
-            "id": "jboss-releases",
-            "name": "jboss-releases",
-            "url": "https://repository.jboss.org/nexus/content/repositories/releases",
-            "releases": { "enabled": "true" }
-          }, 
-          {
-            "id": "jboss-snapshots-repository",
-            "name": "jboss-snapshots-repository",
-            "url": "https://repository.jboss.org/nexus/content/repositories/snapshots/",
-            "snapshots": { "enabled": "true" }         
-          },
-          {
-            "id": "redhat-ga-repository",
-            "name": "Red Hat GA repository",
-            "url": "https://maven.repository.redhat.com/ga/",
-            "releases": { "enabled": "true" },
-            "snapshots": { "enabled": "false" }         
-          },
-          {
-            "id": "redhat-ea-repository",
-            "name": "Red Hat EA repository",
-            "url": "https://maven.repository.redhat.com/earlyaccess/all/",
-            "releases": { "enabled": "true" },
-            "snapshots": { "enabled": "false" }         
-          }]
-        plugin_repositories: |
-          [{ 
-            "id": "jboss-public-repository",
-            "name": "JBoss Public",
-            "url": "https://repository.jboss.org/nexus/content/groups/public-jboss/",
-            "releases": { "enabled": "true" },
-            "snapshots": { "enabled": "false" }
-          },
-          { 
-            "id": "redhat-ga-repository",
-            "name": "Red Hat GA repository",
-            "url": "https://maven.repository.redhat.com/ga/",
-            "releases": { "enabled": "true" },
-            "snapshots": { "enabled": "false" }
-          },
-          { 
-            "id": "redhat-ea-repository",
-            "name": "Red Hat EA repository",
-            "url": "https://maven.repository.redhat.com/earlyaccess/all/",
-            "releases": { "enabled": "true" },
-            "snapshots": { "enabled": "false" }
-          }]
+#     - name: maven-settings-xml-action
+#       uses: whelk-io/maven-settings-xml-action@v14
+#       with:
+#         repositories: |
+#           [{ 
+#             "id": "jboss-releases",
+#             "name": "jboss-releases",
+#             "url": "https://repository.jboss.org/nexus/content/repositories/releases",
+#             "releases": { "enabled": "true" }
+#           }, 
+#           {
+#             "id": "jboss-snapshots-repository",
+#             "name": "jboss-snapshots-repository",
+#             "url": "https://repository.jboss.org/nexus/content/repositories/snapshots/",
+#             "snapshots": { "enabled": "true" }         
+#           },
+#           {
+#             "id": "redhat-ga-repository",
+#             "name": "Red Hat GA repository",
+#             "url": "https://maven.repository.redhat.com/ga/",
+#             "releases": { "enabled": "true" },
+#             "snapshots": { "enabled": "false" }         
+#           },
+#           {
+#             "id": "redhat-ea-repository",
+#             "name": "Red Hat EA repository",
+#             "url": "https://maven.repository.redhat.com/earlyaccess/all/",
+#             "releases": { "enabled": "true" },
+#             "snapshots": { "enabled": "false" }         
+#           }]
+#         plugin_repositories: |
+#           [{ 
+#             "id": "jboss-public-repository",
+#             "name": "JBoss Public",
+#             "url": "https://repository.jboss.org/nexus/content/groups/public-jboss/",
+#             "releases": { "enabled": "true" },
+#             "snapshots": { "enabled": "false" }
+#           },
+#           { 
+#             "id": "redhat-ga-repository",
+#             "name": "Red Hat GA repository",
+#             "url": "https://maven.repository.redhat.com/ga/",
+#             "releases": { "enabled": "true" },
+#             "snapshots": { "enabled": "false" }
+#           },
+#           { 
+#             "id": "redhat-ea-repository",
+#             "name": "Red Hat EA repository",
+#             "url": "https://maven.repository.redhat.com/earlyaccess/all/",
+#             "releases": { "enabled": "true" },
+#             "snapshots": { "enabled": "false" }
+#           }]
     # - name: Build/Compile and run unit tests
     # # sonar flag are not included - requires adding secrets into repo security
     #   uses: GabrielBB/xvfb-action@v1
@@ -85,7 +85,7 @@ jobs:
     - name: Test step - writing xunit file
       uses: DamianReeves/write-file-action@v1.0
       with:
-        path: ${{ env.home }}/tests/target/surefire-reports/testXunit.xml
+        path: tests/target/surefire-reports/testXunit.xml
         contents: |
           <?xml version="1.0" encoding="UTF-8"?>
           <testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.jboss.tools.ws.ui.test.JBossWSUIAllTests" time="0.731" tests="38" errors="0" skipped="0" failures="0">
