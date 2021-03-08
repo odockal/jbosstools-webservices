@@ -162,8 +162,8 @@ jobs:
       with: 
         name: junit-logs
         path: |
-          *tests/*/target/surefire-reports/
-          */*tests/*/target/surefire-reports/
+          *tests/**/target/surefire-reports/
+          */*tests/**/target/surefire-reports/
           **/*.log
         retention-days: 5
     - name: Publish Unit Test Results
