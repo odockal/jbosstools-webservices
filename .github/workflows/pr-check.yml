@@ -1,0 +1,167 @@
+name: WebServices CI
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }} # compiles and test on Ubuntu
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java: ["11"]
+      fail-fast: false
+
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Setup Java ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+        java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+        architecture: x64
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v14
+      with:
+        repositories: |
+          [{ 
+            "id": "jboss-releases",
+            "name": "jboss-releases",
+            "url": "https://repository.jboss.org/nexus/content/repositories/releases",
+            "releases": { "enabled": "true" }
+          }, 
+          {
+            "id": "jboss-snapshots-repository",
+            "name": "jboss-snapshots-repository",
+            "url": "https://repository.jboss.org/nexus/content/repositories/snapshots/",
+            "snapshots": { "enabled": "true" }         
+          },
+          {
+            "id": "redhat-ga-repository",
+            "name": "Red Hat GA repository",
+            "url": "https://maven.repository.redhat.com/ga/",
+            "releases": { "enabled": "true" },
+            "snapshots": { "enabled": "false" }         
+          },
+          {
+            "id": "redhat-ea-repository",
+            "name": "Red Hat EA repository",
+            "url": "https://maven.repository.redhat.com/earlyaccess/all/",
+            "releases": { "enabled": "true" },
+            "snapshots": { "enabled": "false" }         
+          }]
+        plugin_repositories: |
+          [{ 
+            "id": "jboss-public-repository",
+            "name": "JBoss Public",
+            "url": "https://repository.jboss.org/nexus/content/groups/public-jboss/",
+            "releases": { "enabled": "true" },
+            "snapshots": { "enabled": "false" }
+          },
+          { 
+            "id": "redhat-ga-repository",
+            "name": "Red Hat GA repository",
+            "url": "https://maven.repository.redhat.com/ga/",
+            "releases": { "enabled": "true" },
+            "snapshots": { "enabled": "false" }
+          },
+          { 
+            "id": "redhat-ea-repository",
+            "name": "Red Hat EA repository",
+            "url": "https://maven.repository.redhat.com/earlyaccess/all/",
+            "releases": { "enabled": "true" },
+            "snapshots": { "enabled": "false" }
+          }]
+    # - name: Build/Compile and run unit tests
+    # # sonar flag are not included - requires adding secrets into repo security
+    #   uses: GabrielBB/xvfb-action@v1
+    #   with:
+    #     run: mvn clean verify -U -fae -B -DskipITests=true -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
+    - name: Test step - writing xunit file
+      uses: DamianReeves/write-file-action@v1
+      with:
+        path: ${{ env.home }}/tests/target/surefire-reports/testXunit.xml
+        contents: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.jboss.tools.ws.ui.test.JBossWSUIAllTests" time="0.731" tests="38" errors="0" skipped="0" failures="0">
+            <properties>
+              <property name="osgi.framework.shape" value="jar"/>
+              <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+              <property name="osgi.framework" value="file:/home/odockal/.m2/repository/p2/osgi/bundle/org.eclipse.osgi/3.16.0.v20200828-0759/org.eclipse.osgi-3.16.0.v20200828-0759.jar"/>
+              <property name="osgi.configuration.area" value="file:/home/odockal/git/jbosstools-webservices/tests/org.jboss.tools.ws.ui.test/target/work/configuration/"/>
+              <property name="osgi.os" value="linux"/>
+              <property name="osgi.clean" value="true"/>
+              <property name="org.osgi.framework.os.name" value="Linux"/>
+              <property name="org.osgi.supports.framework.extension" value="true"/>
+              <property name="applicationXMI" value="org.eclipse.ui.workbench/LegacyIDE.e4xmi"/>
+              <property name="org.osgi.framework.storage" value="/home/odockal/git/jbosstools-webservices/tests/org.jboss.tools.ws.ui.test/target/work/configuration"/>
+              <property name="user.dir" value="/home/odockal/git/jbosstools-webservices/tests/org.jboss.tools.ws.ui.test"/>
+              <property name="os.arch" value="amd64"/>
+              <property name="osgi.ws" value="gtk"/>
+              <property name="osgi.instance.area" value="file:/home/odockal/git/jbosstools-webservices/tests/org.jboss.tools.ws.ui.test/target/work/data/"/>
+              <property name="eclipse.startTime" value="1615187870193"/>
+              <property name="usage_reporting_enabled" value="false"/>
+              <property name="org.osgi.framework.os.version" value="5.10.13.fc33"/>
+              <property name="java.vm.info" value="mixed mode, sharing"/>
+              <property name="java.vm.version" value="11.0.10+9"/>
+              <property name="java.class.version" value="55.0"/>
+            </properties>
+            <testcase name="testSetAndDisplayJBossWSRuntimePreferencePage" classname="org.jboss.tools.ws.ui.test.preferences.JBossWSRuntimePreferencePageTest" time="0.211"/>
+            <testcase name="testDisplayJBossWSRuntimePreferencePage" classname="org.jboss.tools.ws.ui.test.preferences.JBossWSRuntimePreferencePageTest" time="0.217"/>
+            <testcase name="testShowJBossWSRuntimePreferencePage" classname="org.jboss.tools.ws.ui.test.preferences.JBossWSRuntimePreferencePageTest" time="0.252"/>
+            <testcase name="testParseURLTemplateWith3MandatoryParameters" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.009"/>
+            <testcase name="testValidateDouble" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.001"/>
+            <testcase name="testNotValidateInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.002"/>
+            <testcase name="testParseURLTemplateWithTwoQueryParamsWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateString" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplaceListOfIntegersWithMultipleValuesInMatrixParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplacePathParamWithInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithMatrixAndQueryParamsWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithACrazyMixOfParameters" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.001"/>
+            <testcase name="testReplaceListOfIntegersWithMultipleValuesInQueryParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithQueryParamWithoutDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateFloatWithInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testNotValidateLong" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplacePathParamWithLong" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.001"/>
+            <testcase name="testValidateListOfIntegersWithSingleValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplaceListOfIntegersWithSingleValueInSecondQueryParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testNotValidateFloat" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplacePathParamWithFloat" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithQueryParamWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateDoubleWithLongValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.001"/>
+            <testcase name="testReplaceListOfIntegersWithMultipleValuesInSecondQueryParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testNotValidateListOfInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithMatrixParamWithoutDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithTwoQueryParamWithoutDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testNotValidateDouble" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateFloat" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0.001"/>
+            <testcase name="testReplaceListOfIntegersWithSingleValueInQueryParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplacePathParamWithDouble" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateListOfIntegersWithMultipleValues" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplaceMatrixParamWithInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateDoubleWithIntValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateInteger" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testParseURLTemplateWithTwoMatrixParamsWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testValidateLong" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            <testcase name="testReplaceListOfIntegersWithSingleValueInMatrixParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
+            </testsuite>
+        write-mode: append
+    - name: Archiving test artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+        name: junit-logs
+        path: |
+          *tests/*/target/surefire-reports/
+          */*tests/*/target/surefire-reports/
+          **/*.log
+        retention-days: 5
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: tests/**/*.xml
