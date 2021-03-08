@@ -82,6 +82,10 @@ jobs:
     #   uses: GabrielBB/xvfb-action@v1
     #   with:
     #     run: mvn clean verify -U -fae -B -DskipITests=true -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
+    - name: CMD
+      run: |
+        pwd
+        ls
     - name: Test step - writing xunit file
       uses: DamianReeves/write-file-action@v1.0
       with:
