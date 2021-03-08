@@ -21,7 +21,7 @@ jobs:
                 run_id: ${{github.event.workflow_run.id}},
             });
             for (var artifact of artifacts.data.artifacts) {
-              if (artifact.name.endsWith('unit-test-reports')) {
+              if (artifact.name.endsWith('test-reports')) {
                 var zipfile = await github.actions.downloadArtifact({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -45,5 +45,5 @@ jobs:
         uses: scacap/action-surefire-report@v1
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          report_paths: '${{github.workspace}}/*tests/**/TEST-*.xml'
+          report_paths: '${{github.workspace}}/*test-reports/*tests/**/TEST-*.xml'
           commit: ${{github.event.workflow_run.head_sha}}
