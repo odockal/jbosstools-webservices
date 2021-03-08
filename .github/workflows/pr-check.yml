@@ -87,7 +87,7 @@ jobs:
     - name: Test step - writing xunit file
       uses: DamianReeves/write-file-action@v1.0
       with:
-        path: tests/target/surefire-reports/testXunit.xml
+        path: tests/target/surefire-reports/TEST-testXunit.xml
         contents: |
           <?xml version="1.0" encoding="UTF-8"?>
           <testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.jboss.tools.ws.ui.test.JBossWSUIAllTests" time="0.731" tests="38" errors="0" skipped="0" failures="0">
