@@ -156,7 +156,7 @@ jobs:
     - name: Archiving test artifacts
       uses: actions/upload-artifact@v2
       with: 
-        name: unit-test-reports
+        name: ${{ matrix.os }}-test-reports
         path: |
           *tests/**/target/surefire-reports/
           */*tests/**/target/surefire-reports/
