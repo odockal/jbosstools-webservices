@@ -83,7 +83,7 @@ jobs:
     #   with:
     #     run: mvn clean verify -U -fae -B -DskipITests=true -Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
     - name: Test step - writing xunit file
-      uses: DamianReeves/write-file-action@v1
+      uses: DamianReeves/write-file-action@v1.0
       with:
         path: ${{ env.home }}/tests/target/surefire-reports/testXunit.xml
         contents: |
@@ -149,7 +149,6 @@ jobs:
             <testcase name="testParseURLTemplateWithTwoMatrixParamsWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
             <testcase name="testValidateLong" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
             <testcase name="testReplaceListOfIntegersWithSingleValueInMatrixParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
-          </testsuite>
         write-mode: overwrite
     - name: Archiving test artifacts
       uses: actions/upload-artifact@v2
