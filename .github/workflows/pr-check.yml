@@ -149,8 +149,8 @@ jobs:
             <testcase name="testParseURLTemplateWithTwoMatrixParamsWithDefaultValue" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
             <testcase name="testValidateLong" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
             <testcase name="testReplaceListOfIntegersWithSingleValueInMatrixParams" classname="org.jboss.tools.ws.ui.test.dialogs.JaxrsURLTemplateParserTestCase" time="0"/>
-            </testsuite>
-        write-mode: append
+          </testsuite>
+        write-mode: overwrite
     - name: Archiving test artifacts
       uses: actions/upload-artifact@v2
       with: 
