@@ -40,7 +40,7 @@ public class JAXRSApplicationWizardPage extends WizardPage {
 	 * @return
 	 */
 	public String getWizardPageInfoText() {
-		return new DefaultText(5).getText();
+		return ((JAXRSApplicationWizard)this.referencedComposite).getMessage();
 	}
 	
 	public SubclassOfApplicationWizardPart useSubclassOfApplication() {

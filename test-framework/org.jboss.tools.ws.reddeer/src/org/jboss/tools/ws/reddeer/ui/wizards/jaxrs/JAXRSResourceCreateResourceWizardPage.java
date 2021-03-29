@@ -36,7 +36,8 @@ public class JAXRSResourceCreateResourceWizardPage extends WizardPage {
 	 * @return
 	 */
 	public String getWizardPageInfoText() {
-		return new DefaultText(5).getText();
+		return ((org.eclipse.reddeer.jface.dialogs.TitleAreaDialog)referencedComposite).getMessage();
+		// return new DefaultText(5).getText();
 	}
 
 	// source folder
